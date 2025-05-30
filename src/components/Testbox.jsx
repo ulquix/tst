@@ -29,7 +29,7 @@ const overflowChars = useRef({})
           return updated;
         });
 
-if (currentLetterIndex == words[currentWordIndex].length) {
+if (currentLetterIndex >= words[currentWordIndex].length) {
   if (!overflowChars.current[currentWordIndex]) {
     overflowChars.current[currentWordIndex] = [];
   }
@@ -190,24 +190,32 @@ word[currentLetterIndex - 1] = ' ';
           className="main-div flex flex-wrap justify-start gap-4 w-7xl h-40 overflow-hidden relative"
           style={{ position: "relative" }}
         >
-          {words.map((word, wordIdx) => (
-            <div
-              ref={(el) => (WordsRef.current[wordIdx] = el)}
-              key={wordIdx}
-              className={`word text-4xl `}
-            >
-              {word.split("").map((letter, letterIdx) => (
-                <span
-                  className={getClasses(wordIdx, letterIdx)}
-                  key={letterIdx}
-                >
-                  {letter}
-                </span>
-              ))}
-        
-              
-            </div>
-          ))}
+         {words.map((word, wordIdx) => (
+  <div
+    ref={(el) => (WordsRef.current[wordIdx] = el)}
+    key={wordIdx}
+    className="word text-4xl"
+  >
+    {word.split("").map((letter, letterIdx) => (
+      <span
+        key={letterIdx}
+        className={getClasses(wordIdx, letterIdx)}
+      >
+        {letter}
+      </span>
+    ))}
+    {overflowChars.current[wordIdx] &&
+      overflowChars.current[wordIdx].map((char, index) => (
+        <span
+          key={`overflow-${wordIdx}-${index}`}
+          className="text-red-500"
+        >
+          {char}
+        </span>
+      ))}
+  </div>
+))}
+
         </div>
       </div>
     </>
