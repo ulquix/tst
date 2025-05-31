@@ -41,7 +41,8 @@ const Testbox = () => {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
           }
-          
+                    SetLetterCount((count) => count + 1);
+
 
           if (currentLetterIndex >= words[currentWordIndex].length) {
             if (currentLetterIndex < words[currentWordIndex].length + 5) {
