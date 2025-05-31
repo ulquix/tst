@@ -11,6 +11,7 @@ const STATES = {
 
 const Testbox = () => {
   const [startTime, setStartTime] = useState(null);
+  const [currentTime,setCurrentTime] = useState(0)
   const [words, setWords] = useState(generate({ exactly: 100, maxLength: 6 }));
   const [currentWordIndex, SetWordIndex] = useState(0);
   const [currentLetterIndex, SetLetterIndex] = useState(0);
@@ -32,10 +33,6 @@ const Testbox = () => {
       }
 
       if (status !== STATES.ENDED) {
-        // if(e.key.length===1 && e.code=="Space"){
-                  // SetLetterCount((count) => count + 1);
-
-        // }
         if (/^[a-zA-Z]$/.test(e.key) && e.key.length === 1) {
           if (currentWordIndex === 0 && currentLetterIndex === 0) {
             setStatus(STATES.STARTED);
@@ -74,10 +71,10 @@ const Testbox = () => {
                       SetLetterCount((count) => count + 1);
 
             SetWordCount((prev) => prev + 1);
-            if (wordCount >= 20) {
-              setStatus(STATES.ENDED);
+            // if (wordCount >= 20) {
+            //   setStatus(STATES.ENDED);
               
-            }
+            // }
 
             if (currentLetterIndex <= words[currentWordIndex].length - 1) {
               for (let i = currentLetterIndex; i < words[currentWordIndex].length; i++) {
@@ -204,17 +201,36 @@ const Testbox = () => {
     }
   }, [currentLetterIndex, currentWordIndex, words]);
 
-  useEffect(() => {
-    if (status === STATES.ENDED && startTime !== null) {
-      console.log("word count", wordCount);
-      console.log("letter count", LetterCount);
-                const endTime = Date.now();
-      const elapsedTime = (endTime - startTime)/1000;
-const wpm = (LetterCount * 60) / (5 * elapsedTime); 
-console.log(elapsedTime)
-   console.log(wpm)
-    }
-  }, [status]);
+useEffect(() => {
+  if (status === STATES.ENDED && startTime !== null) {
+    console.log("word count:", wordCount);
+    console.log("letter count:", LetterCount);
+    const endTime = Date.now();
+    const elapsedTime = (endTime - startTime) / 1000;
+    const wpm = (LetterCount * 60) / (5 * elapsedTime); 
+    console.log("elapsed time (s):", elapsedTime);
+    console.log("wpm:", wpm);
+  }
+}, [status, startTime, wordCount, LetterCount]);
+
+useEffect(() => {
+  if (currentTime >= 15) {
+    setStatus(STATES.ENDED); 
+  }
+}, [currentTime]);
+
+useEffect(() => {
+  let intervalId;
+
+  if (status === STATES.STARTED) {
+    intervalId = setInterval(() => {
+      setCurrentTime(prev => prev + 1);
+    }, 1000);
+  }
+
+  return () => clearInterval(intervalId);
+}, [status]);
+
 
   const getClasses = (word, letter) => {
     return letterStatesRef.current?.[word]?.[letter] || "";
@@ -275,6 +291,9 @@ return (
               </div>
             ))}
           </div>
+        </div>
+       <div id="bankai">
+         {currentTime}
         </div>
       </>
     )}
