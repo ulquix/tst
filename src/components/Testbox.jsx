@@ -66,7 +66,7 @@ const Testbox = () => {
 
         if (e.code === "Space") {
           if (currentLetterIndex > 0) {
-            if (wordCount < 10) {
+            if (wordCount < 60) {
               SetWordCount((prev) => prev + 1);
             } else {
               SetWordCount((prev) => prev + 1);
@@ -204,10 +204,10 @@ const Testbox = () => {
       console.log("word count", wordCount);
       console.log("letter count", LetterCount);
                 const endTime = Date.now();
-    const elapsedTime = (endTime - startTime)/1000;
-    const minute = 60;
-    const wpm = ((minute/elapsedTime)*(LetterCount))/5
-    console.log(wpm)
+      const elapsedTime = (endTime - startTime)/1000;
+const wpm = (LetterCount * 60) / (5 * elapsedTime); 
+console.log(elapsedTime)
+   console.log(wpm)
     }
   }, [status]);
 
@@ -238,7 +238,7 @@ return (
             top: cursorPos.top,
             left: cursorPos.left,
             transition: "left .1s ease, top 0.1s ease",
-            animation: "blink 1s steps(1) infinite",
+            // animation: "blink 1s steps(1) infinite",
             pointerEvents: "none",
             zIndex: 10
           }}
