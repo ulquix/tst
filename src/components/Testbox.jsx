@@ -32,12 +32,16 @@ const Testbox = () => {
       }
 
       if (status !== STATES.ENDED) {
+        // if(e.key.length===1 && e.code=="Space"){
+                  // SetLetterCount((count) => count + 1);
+
+        // }
         if (/^[a-zA-Z]$/.test(e.key) && e.key.length === 1) {
           if (currentWordIndex === 0 && currentLetterIndex === 0) {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
           }
-          SetLetterCount((count) => count + 1);
+          
 
           if (currentLetterIndex >= words[currentWordIndex].length) {
             if (currentLetterIndex < words[currentWordIndex].length + 5) {
@@ -66,6 +70,8 @@ const Testbox = () => {
 
         if (e.code === "Space") {
           if (currentLetterIndex > 0) {
+                      SetLetterCount((count) => count + 1);
+
             SetWordCount((prev) => prev + 1);
             if (wordCount >= 20) {
               setStatus(STATES.ENDED);
