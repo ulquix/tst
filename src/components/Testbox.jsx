@@ -66,10 +66,9 @@ const Testbox = () => {
 
         if (e.code === "Space") {
           if (currentLetterIndex > 0) {
-            if (wordCount < 60) {
-              SetWordCount((prev) => prev + 1);
-            } else {
-              SetWordCount((prev) => prev + 1);
+            SetWordCount((prev) => prev + 1);
+            if (wordCount >= 60) {
+            
               setStatus(STATES.ENDED);
               
             }
