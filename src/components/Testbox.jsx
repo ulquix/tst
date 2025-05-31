@@ -11,7 +11,7 @@ const STATES = {
 
 const Testbox = () => {
   const [startTime, setStartTime] = useState(null);
-  const [words, setWords] = useState(generate(100));
+  const [words, setWords] = useState(generate({min:100,maxLength:6}));
   const [currentWordIndex, SetWordIndex] = useState(0);
   const [currentLetterIndex, SetLetterIndex] = useState(0);
   const [cursorPos, SetCursor] = useState({ left: 0, top: 0 });
@@ -69,6 +69,7 @@ const Testbox = () => {
             if (wordCount < 10) {
               SetWordCount((prev) => prev + 1);
             } else {
+              SetWordCount((prev) => prev + 1);
               setStatus(STATES.ENDED);
               
             }
@@ -127,7 +128,7 @@ const Testbox = () => {
     SetWordIndex(0);
     letterStatesRef.current = {};
     overflowChars.current = {};
-    setWords(generate(100));
+    setWords(generate({min:100,maxLength:6}));
     setStatus(STATES.NOT_STARTED);
     SetWordCount(0);
     SetLetterCount(0);
