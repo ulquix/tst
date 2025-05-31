@@ -251,8 +251,8 @@ return (
               >
                 {word.split("").map((letter, letterIdx) => (
                   <span
-                    key={letterIdx}
-                    className={getClasses(wordIdx, letterIdx)}
+                    key={letterIdx} 
+                    className={`text-neutral-500 ${getClasses(wordIdx, letterIdx)}`}
                   >
                     {letter}
                   </span>
