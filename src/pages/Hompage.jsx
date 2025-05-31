@@ -7,7 +7,7 @@ const Homepage = () => {
   return (
     <>
 <Settings>
-    <TestCustomizationBar/>
+    {/* <TestCustomizationBar/> */}
 <Testbox/>
 </Settings>
     </>

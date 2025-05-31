@@ -20,6 +20,7 @@ const overflowChars = useRef({})
         SetLetterIndex(0);
         SetWordIndex(0);
         letterStatesRef.current = {}
+        overflowChars.current = {}
         setWords(generate(100));
         return;
       }
@@ -54,7 +55,7 @@ if (currentLetterIndex >= words[currentWordIndex].length) {
         SetLetterIndex((prev) => prev + 1);
       }
       if (e.code == "Space") {
-        if(currentLetterIndex>0){
+        if(currentLetterIndex>=0){
 
           if (currentLetterIndex <= words[currentWordIndex].length - 1) {
 
@@ -71,10 +72,6 @@ if (currentLetterIndex >= words[currentWordIndex].length) {
           }
 
           if (isDeletable.current && currentWordIndex >= 19) {
-            SetWordIndex((prev) => prev + 1);
-            setWords(words.slice(10));
-            SetWordIndex((prev) => prev - 10);
-            SetLetterIndex(0);
             const keys = Object.keys(letterStatesRef.current);
             const emp = {};
             keys.forEach((key) => {
@@ -84,6 +81,19 @@ if (currentLetterIndex >= words[currentWordIndex].length) {
               }
             });
             letterStatesRef.current = { ...emp };
+            const overflowWords = Object.keys(overflowChars.current)
+            const temp ={};
+            overflowWords.forEach((overflowWords)=>{
+              const newkey  = parseInt(overflowWords)-10;
+              if(newkey>=0){
+                temp[newkey] = overflowChars.current[overflowWords]
+              }
+            })
+            overflowChars.current = {...temp}
+                        SetWordIndex((prev) => prev + 1);
+            setWords(words.slice(10));
+            SetWordIndex((prev) => prev - 10);
+            SetLetterIndex(0);
             return;
           }
   
@@ -94,13 +104,21 @@ if (currentLetterIndex >= words[currentWordIndex].length) {
       if(e.key=="Backspace"){
         if(e.ctrlKey){
 letterStatesRef.current[currentWordIndex]={}
+delete overflowChars.current[currentWordIndex]
+
      SetLetterIndex(0)
      return
         }
         const word =  letterStatesRef.current[currentWordIndex]
-       if(currentLetterIndex>0){
+       if(currentLetterIndex>0 && currentLetterIndex<=words[currentWordIndex].length){
 word[currentLetterIndex - 1] = ' ';
          SetLetterIndex(prev=>prev-1)
+       }
+       else if(currentLetterIndex>=words[currentWordIndex].length){
+        const temp = [... overflowChars.current[currentWordIndex]]
+        temp.pop()
+        overflowChars.current[currentWordIndex] = temp
+        SetLetterIndex(prev=>prev-1)
        }
       }
     };
@@ -117,7 +135,7 @@ word[currentLetterIndex - 1] = ' ';
 
     const currentLetter = currentWord.children[currentLetterIndex];
 
-    if (currentLetterIndex === currentWord.children.length) {
+    if (currentLetterIndex >= currentWord.children.length) {
       const lastLetter = currentWord.children[currentLetterIndex - 1];
       if (lastLetter) {
         const rect = lastLetter.getBoundingClientRect();
@@ -204,15 +222,17 @@ word[currentLetterIndex - 1] = ' ';
         {letter}
       </span>
     ))}
-    {overflowChars.current[wordIdx] &&
-      overflowChars.current[wordIdx].map((char, index) => (
-        <span
-          key={`overflow-${wordIdx}-${index}`}
-          className="text-red-500"
-        >
-          {char}
-        </span>
-      ))}
+{overflowChars.current?.[wordIdx]?.length > 0
+  ? overflowChars.current[wordIdx].map((char, index) => (
+      <span
+        key={`overflow-${wordIdx}-${index}`}
+        className="text-red-500"
+      >
+        {char}
+      </span>
+    ))
+  : null}
+
   </div>
 ))}
 
