@@ -19,10 +19,12 @@ const Testbox = () => {
   const letterStatesRef = useRef({});
   const [status, setStatus] = useState(STATES.NOT_STARTED);
   const [wordCount, SetWordCount] = useState(0);
-  const [LetterCount, SetLetterCount] = useState(0);
+  const [LetterCount, SetLetterCount] = useState([]);
   const isDeletable = useRef();
   const WordsRef = useRef({});
   const overflowChars = useRef({});
+
+  const {settings} = useContext(SettingContext)
 
   useEffect(() => {
     const handlekeydown = (e) => {
@@ -38,7 +40,6 @@ const Testbox = () => {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
           }
-                    SetLetterCount((count) => count + 1);
 
 
           if (currentLetterIndex >= words[currentWordIndex].length) {
@@ -53,11 +54,13 @@ const Testbox = () => {
           }
 
           if (e.key === words[currentWordIndex][currentLetterIndex]) {
+            SetLetterCount(prev=>[...prev,'correct'])
             letterStatesRef.current[currentWordIndex] = {
               ...letterStatesRef.current[currentWordIndex],
               [currentLetterIndex]: "correct text-white"
             };
           } else {
+            SetLetterCount(prev=>[...prev,'incorrect'])
             letterStatesRef.current[currentWordIndex] = {
               ...letterStatesRef.current[currentWordIndex],
               [currentLetterIndex]: "incorrect text-red-500"
@@ -68,7 +71,7 @@ const Testbox = () => {
 
         if (e.code === "Space") {
           if (currentLetterIndex > 0) {
-                      SetLetterCount((count) => count + 1);
+                      SetLetterCount(prev=>[...prev,'space']);
 
             SetWordCount((prev) => prev + 1);
             // if (wordCount >= 20) {
@@ -205,16 +208,19 @@ useEffect(() => {
   if (status === STATES.ENDED && startTime !== null) {
     console.log("word count:", wordCount);
     console.log("letter count:", LetterCount);
+    const reallettercount = LetterCount.filter((letter)=>letter!='incorrect')
     const endTime = Date.now();
     const elapsedTime = (endTime - startTime) / 1000;
-    const wpm = (LetterCount * 60) / (5 * elapsedTime); 
+    const wpm = (LetterCount.length * 60) / (5 * elapsedTime); 
+    const realwpm = (reallettercount.length * 60) / (5 * elapsedTime); 
     console.log("elapsed time (s):", elapsedTime);
     console.log("wpm:", wpm);
+    console.log("realwpm:", realwpm);
   }
-}, [status, startTime, wordCount, LetterCount]);
+}, [status, startTime]);
 
 useEffect(() => {
-  if (currentTime >= 15) {
+  if (currentTime >= settings.BasedDependency) {
     setStatus(STATES.ENDED); 
   }
 }, [currentTime]);
