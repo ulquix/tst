@@ -18,8 +18,8 @@ const Testbox = () => {
   const [cursorPos, SetCursor] = useState({ left: 0, top: 0 });
   const letterStatesRef = useRef({});
   const [status, setStatus] = useState(STATES.NOT_STARTED);
-  const [wordCount, SetWordCount] = useState(0);
-  const [LetterCount, SetLetterCount] = useState([]);
+const wordCount = useRef([])
+  const LetterCount = useRef([])
   const isDeletable = useRef();
   const WordsRef = useRef({});
   const overflowChars = useRef({});
@@ -54,13 +54,13 @@ const Testbox = () => {
           }
 
           if (e.key === words[currentWordIndex][currentLetterIndex]) {
-            SetLetterCount(prev=>[...prev,'correct'])
+            LetterCount.current = [...LetterCount.current,'correct']
             letterStatesRef.current[currentWordIndex] = {
               ...letterStatesRef.current[currentWordIndex],
               [currentLetterIndex]: "correct text-white"
             };
           } else {
-            SetLetterCount(prev=>[...prev,'incorrect'])
+            LetterCount.current = [...LetterCount.current,'incorrect']
             letterStatesRef.current[currentWordIndex] = {
               ...letterStatesRef.current[currentWordIndex],
               [currentLetterIndex]: "incorrect text-red-500"
@@ -71,9 +71,8 @@ const Testbox = () => {
 
         if (e.code === "Space") {
           if (currentLetterIndex > 0) {
-                      SetLetterCount(prev=>[...prev,'space']);
+            LetterCount.current = [...LetterCount.current,'space']
 
-            SetWordCount((prev) => prev + 1);
             // if (wordCount >= 20) {
             //   setStatus(STATES.ENDED);
               
@@ -93,6 +92,15 @@ const Testbox = () => {
               return;
             }
 
+            const values = Object.values(letterStatesRef.current[currentWordIndex])
+            const found = values.find((value)=>value=='incorrect text-red-500')
+            if(found){
+              wordCount.current = [...wordCount.current,'incorrect']
+            }
+            else{
+                            wordCount.current = [...wordCount.current,'correct']
+
+            }
             SetLetterIndex(0);
             SetWordIndex((prev) => prev + 1);
           }
@@ -135,8 +143,8 @@ const Testbox = () => {
     overflowChars.current = {};
     setWords(generate({ exactly: 100, maxLength: 6 }));
     setStatus(STATES.NOT_STARTED);
-    SetWordCount(0);
-    SetLetterCount(0);
+    wordCount.current = []
+    LetterCount.current = [];
   };
 
   const shiftWordBuffer = () => {
@@ -206,16 +214,24 @@ const Testbox = () => {
 
 useEffect(() => {
   if (status === STATES.ENDED && startTime !== null) {
-    console.log("word count:", wordCount);
-    console.log("letter count:", LetterCount);
-    const reallettercount = LetterCount.filter((letter)=>letter!='incorrect')
     const endTime = Date.now();
+
+    const correctWords = wordCount.current.filter((word)=>word=='correct').length
+    const incorrectWords = wordCount.current.filter((word)=>word=='incorrect').length
+    const correctLetter = LetterCount.current.filter((letter)=>letter!='incorrect').length
+    const rawLetter = LetterCount.current.length
+
     const elapsedTime = (endTime - startTime) / 1000;
-    const wpm = (LetterCount.length * 60) / (5 * elapsedTime); 
-    const realwpm = (reallettercount.length * 60) / (5 * elapsedTime); 
+    const rawwpm = parseInt((rawLetter * 60) / (5 * elapsedTime)); 
+    const realwpm = parseInt((correctLetter * 60) / (5 * elapsedTime)); 
+
     console.log("elapsed time (s):", elapsedTime);
-    console.log("wpm:", wpm);
-    console.log("realwpm:", realwpm);
+    console.log('total words',correctWords+incorrectWords)
+    console.log('correct words',correctWords)
+    console.log('total letters',rawLetter)
+    console.log('correct letters',correctLetter)
+    console.log('raw speed',rawwpm)
+    console.log('actual speed',realwpm)
   }
 }, [status, startTime]);
 
