@@ -1,112 +1,208 @@
-import React, { useState, useEffect,useContext } from 'react';
-import { FaEllipsisVertical } from "react-icons/fa6";
-import { FaAt, FaHashtag } from "react-icons/fa";
+import React, { useState, useEffect, useContext } from 'react';
 import { IoTime } from "react-icons/io5";
 import { TbCircleLetterAFilled } from "react-icons/tb";
-import { FaQuoteLeft } from "react-icons/fa6";
-import { FaWrench } from "react-icons/fa";
-import { GiCrossedChains } from "react-icons/gi";
+import { FaEllipsisVertical } from "react-icons/fa6";
 import { SettingContext } from '../context/Settings';
-import DifficultyLevel from './DifficultyLevel'
-
 
 const timearr = [15, 30, 60, 120];
 const wordarr = [20, 50, 100, 200];
-const quotearr = ["short", "medium", "long"];
+const difficultyOptions = ['easy', 'normal', 'hard'];
 
-const TestCustomizationBar = ({isVisible}) => {
-  const {settings,setSettings} = useContext(SettingContext);
+const DifficultyLevel = () => {
+  const { settings, setSettings } = useContext(SettingContext);
+  const [selected, setSelected] = useState(difficultyOptions[0]);
 
+  useEffect(() => {
+    if (setSettings) {
+      setSettings(prev => ({ ...prev, mode: selected }));
+    }
+  }, [selected, setSettings]);
+useEffect(()=>{
+  console.log(settings)
+},[settings])
+  return (
+    <div style={{ minWidth: 120, position: 'relative' }}>
+      <select
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+        style={{
+          width: '100%',
+          backgroundColor: 'rgb(17 24 39)',
+          color: 'white',
+          padding: '0.5rem 1rem',
+          borderRadius: '12px',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          cursor: 'pointer',
+          border: '1px solid #3b82f6',
+          userSelect: 'none',
+          appearance: 'none',
+          backgroundImage: 'url("data:image/svg+xml;charset=utf-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%236B7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")',
+          backgroundPosition: 'right 0.5rem center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '1rem',
+          paddingRight: '2.5rem',
+        }}
+      >
+        {difficultyOptions.map((option, idx) => (
+          <option
+            key={idx}
+            value={option}
+            style={{
+              backgroundColor: 'rgb(17 24 39)',
+              color: 'white',
+              padding: '0.5rem',
+            }}
+          >
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
 
+const TestCustomizationBar = ({ isVisible }) => {
+  const { settings, setSettings } = useContext(SettingContext);
   const [variableToMap, setVariableToMap] = useState(timearr);
 
-  const toggleSetting = (key) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
   const handleCategoryClick = (type) => {
+    const newArray = type === 'time' ? timearr : type === 'words' ? wordarr : [];
+    setVariableToMap(newArray);
     
-    if (type === 'time') setVariableToMap(timearr);
-    else if (type === 'words') setVariableToMap(wordarr);
-    else if (type === 'quote') setVariableToMap(quotearr);
-    else setVariableToMap([]); 
-    setSettings({...settings,BasedOn:type,BasedDependency:variableToMap[0]})
-    console.log(variableToMap[0])
+    if (setSettings) {
+      setSettings(prev => ({ 
+        ...prev, 
+        BasedOn: type, 
+        BasedDependency: newArray.length > 0 ? newArray[0] : null
+      }));
+    }
   };
 
-  const toogleDependency = (value)=>{
-console.log(value)
-setSettings({...settings,BasedDependency:value})
-  }
+  const toggleDependency = (value) => {
+    if (setSettings) {
+      setSettings(prev => ({ ...prev, BasedDependency: value }));
+    }
+  };
+
   useEffect(() => {
-    console.log("Settings updated:", settings);
+    // Initialize BasedOn and BasedDependency if not set
+    if (settings && !settings.BasedOn) {
+      if (setSettings) {
+        setSettings(prev => ({
+          ...prev,
+          BasedOn: 'time',
+          BasedDependency: timearr[0]
+        }));
+      }
+    }
+  }, [settings, setSettings]);
 
-  }, );
+  useEffect(() => {
+    // Update variableToMap based on current BasedOn setting
+    if (settings?.BasedOn === 'time') {
+      setVariableToMap(timearr);
+    } else if (settings?.BasedOn === 'words') {
+      setVariableToMap(wordarr);
+    }
+  }, [settings?.BasedOn]);
 
-useEffect(()=>{
-setSettings({...settings,BasedDependency:variableToMap[0]})
-// eslint-disable-next-line react-hooks/exhaustive-deps
-},[variableToMap])
+  if (!isVisible) return null;
+
+  // Handle case where context might not be available
+  if (!settings || !setSettings) {
+    return (
+      <div className="flex justify-center mt-4">
+        <div style={{ color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+          Settings context not available
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-    {isVisible && 
-    
-    <div>
-   <div className=" flex justify-center">
-  <div className={`bg-amber-300  flex gap-4 justify-center items-center rounded-xl p-4 `}>
-      <div className="flex items-center justify-center gap-4">
-        <span onClick={() => toggleSetting('punctuations')} className={`cursor-pointer hover:text-gray-400  flex items-center gap-1 ${settings.punctuations?'text-blue-400':''} `}>
-          <FaAt /> punctuations
-        </span>
-        <span onClick={() => toggleSetting('numbers')} className={`cursor-pointer hover:text-gray-400  flex items-center gap-1 ${settings.numbers?'text-blue-400':''} `}>
-          <FaHashtag /> numbers
-        </span>
-      </div>
+    <div className="flex justify-center mt-4">
+      <div style={{
+        backgroundColor: 'rgb(17 24 39)',
+        color: 'white',
+        display: 'flex',
+        gap: '2rem',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '12px',
+        padding: '1rem 2rem',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        userSelect: 'none',
+        position: 'relative',
+        flexWrap: 'wrap', // Better responsive behavior
+      }}>
+        {/* Categories */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <span
+            onClick={() => handleCategoryClick('time')}
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: settings.BasedOn === 'time' ? '#3b82f6' : 'white',
+              transition: 'color 0.3s',
+              userSelect: 'none'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#60a5fa'}
+            onMouseLeave={e => e.currentTarget.style.color = settings.BasedOn === 'time' ? '#3b82f6' : 'white'}
+          >
+            <IoTime size={20} /> time
+          </span>
+          <span
+            onClick={() => handleCategoryClick('words')}
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: settings.BasedOn === 'words' ? '#3b82f6' : 'white',
+              transition: 'color 0.3s',
+              userSelect: 'none'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#60a5fa'}
+            onMouseLeave={e => e.currentTarget.style.color = settings.BasedOn === 'words' ? '#3b82f6' : 'white'}
+          >
+            <TbCircleLetterAFilled size={20} /> words
+          </span>
+        </div>
 
-      <FaEllipsisVertical />
+        <FaEllipsisVertical style={{ color: '#64748b' }} />
 
-      <div className="flex items-center gap-4 flex-wrap justify-center">
-        <span onClick={() => handleCategoryClick('time')} className={`${settings.BasedOn=='time'?'text-blue-400':''} cursor-pointer hover:text-gray-400 flex items-center gap-1`}>
-          <IoTime /> time
-        </span>
-        <span onClick={() => handleCategoryClick('words')} className={`${settings.BasedOn=='words'?'text-blue-400':''} cursor-pointer hover:text-gray-400 flex items-center gap-1`}>
-          <TbCircleLetterAFilled /> words
-        </span>
-        <span onClick={() => handleCategoryClick('quote')} className={`${settings.BasedOn=='quote'?'text-blue-400':''} cursor-pointer hover:text-gray-400 flex items-center gap-1`}>
-          <FaQuoteLeft /> quote
-        </span>
-        <span onClick={() => handleCategoryClick('custom')} className={`${settings.BasedOn=='custom'?'text-blue-400':''} cursor-pointer hover:text-gray-400 flex items-center gap-1`}>
-          <FaWrench /> custom
-        </span>
-        <span onClick={() => handleCategoryClick('freestyle')} className={`${settings.BasedOn=='freestyle'?'text-blue-400':''} cursor-pointer hover:text-gray-400 flex items-center gap-1`}>
-          <GiCrossedChains /> Freestyle
-        </span>
-      </div>
-{settings.BasedDependency && ( <>   <FaEllipsisVertical />
-
-      {variableToMap.length > 0 && (
-        <div className="flex items-center gap-4">
+        {/* Sub values */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
           {variableToMap.map((item, index) => (
-            <div key={index} className={`cursor-pointer hover:text-gray-400 ${settings.BasedDependency==item?'text-blue-400':''} `} onClick={() => toogleDependency(item)}>
+            <div
+              key={index}
+              onClick={() => toggleDependency(item)}
+              style={{
+                cursor: 'pointer',
+                color: settings.BasedDependency === item ? '#3b82f6' : 'white',
+                transition: 'color 0.3s',
+                userSelect: 'none',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '4px',
+                minWidth: '2rem',
+                textAlign: 'center'
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = '#60a5fa'}
+              onMouseLeave={e => e.currentTarget.style.color = settings.BasedDependency === item ? '#3b82f6' : 'white'}
+            >
               {item}
             </div>
           ))}
         </div>
-      )}
-      </>
-    )
-      }
-   
-    </div>
-  </div>
-    <DifficultyLevel/>
 
-</div>
-    }
-    </>
+        <FaEllipsisVertical style={{ color: '#64748b' }} />
+
+        {/* Difficulty dropdown */}
+        <DifficultyLevel />
+      </div>
+    </div>
   );
 };
 

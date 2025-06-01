@@ -5,8 +5,6 @@ import { createContext ,useState} from "react";
 
 const Settings = (props) => {
     const [settings,setSettings] = useState({
-        punctuations: false,
-        numbers: false,
         BasedOn: "time",
         BasedDependency: 15,
         mode:'easy'

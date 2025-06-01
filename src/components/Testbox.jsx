@@ -120,6 +120,7 @@ const wordCount = useRef([])
             word[currentLetterIndex - 1] = " ";
             SetLetterIndex((prev) => prev - 1);
           } else if (currentLetterIndex >= words[currentWordIndex].length) {
+            LetterCount.current.pop()
             const temp = [...overflowChars.current[currentWordIndex]];
             temp.pop();
             overflowChars.current[currentWordIndex] = temp;
@@ -275,6 +276,7 @@ return (
       <TestResults onNewTest={resetTest} stats={stats}/>
     ) : (
       <>
+
         <div
           id="cursor"
           style={{
@@ -290,7 +292,13 @@ return (
             zIndex: 10
           }}
         />
-        <div className="flex justify-center mt-[10vh]">
+        <div className="flex align-center items-center mt-4 ml-4">
+                       <div id="bankai" className='text-3xl  font-bold text-blue-500'>
+         {status==STATES.STARTED?settings.BasedDependency-currentTime:''}
+        </div>
+        </div>
+        <div className="flex justify-center mt-[1vh]">
+          
           <div className="main-div flex flex-wrap justify-start gap-4 w-7xl h-40 overflow-hidden relative">
             {words.map((word, wordIdx) => (
               <div
@@ -318,9 +326,7 @@ return (
             ))}
           </div>
         </div>
-       <div id="bankai">
-         {currentTime}
-        </div>
+
       </>
     )}
   </>
