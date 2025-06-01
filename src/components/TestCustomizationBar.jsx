@@ -14,7 +14,7 @@ const timearr = [15, 30, 60, 120];
 const wordarr = [20, 50, 100, 200];
 const quotearr = ["short", "medium", "long"];
 
-const TestCustomizationBar = () => {
+const TestCustomizationBar = ({isVisible}) => {
   const {settings,setSettings} = useContext(SettingContext);
 
 
@@ -51,6 +51,9 @@ setSettings({...settings,BasedDependency:variableToMap[0]})
 // eslint-disable-next-line react-hooks/exhaustive-deps
 },[variableToMap])
   return (
+    <>
+    {isVisible && 
+    
     <div>
    <div className=" flex justify-center">
   <div className={`bg-amber-300  flex gap-4 justify-center items-center rounded-xl p-4 `}>
@@ -102,6 +105,8 @@ setSettings({...settings,BasedDependency:variableToMap[0]})
     <DifficultyLevel/>
 
 </div>
+    }
+    </>
   );
 };
 

@@ -9,7 +9,7 @@ const STATES = {
   ENDED: "ended"
 };
 
-const Testbox = () => {
+const Testbox = ({on ,off}) => {
   const [stats,Setstats] = useState({})
   const [startTime, setStartTime] = useState(null);
   const [currentTime,setCurrentTime] = useState(0)
@@ -138,6 +138,7 @@ const wordCount = useRef([])
   }, [currentLetterIndex, currentWordIndex, words, status]);
 
   const resetTest = () => {
+    on()
     SetLetterIndex(0);
     SetWordIndex(0);
     letterStatesRef.current = {};
@@ -146,6 +147,8 @@ const wordCount = useRef([])
     setStatus(STATES.NOT_STARTED);
     wordCount.current = []
     LetterCount.current = [];
+    setStartTime(null)
+    setCurrentTime(0)
   };
 
   const shiftWordBuffer = () => {
@@ -216,7 +219,7 @@ const wordCount = useRef([])
 useEffect(() => {
   if (status === STATES.ENDED && startTime !== null) {
     const endTime = Date.now();
-
+off()
     const correctWords = wordCount.current.filter((word)=>word=='correct').length
     const incorrectWords = wordCount.current.filter((word)=>word=='incorrect').length
     const correctLetter = LetterCount.current.filter((letter)=>letter!='incorrect').length
@@ -268,7 +271,7 @@ return (
     `}</style>
 
     {status === STATES.ENDED ? (
-      <TestResults stats={stats}/>
+      <TestResults onNewTest={resetTest} stats={stats}/>
     ) : (
       <>
         <div
@@ -305,7 +308,7 @@ return (
                 {overflowChars.current?.[wordIdx]?.map((char, index) => (
                   <span
                     key={`overflow-${wordIdx}-${index}`}
-                    className="text-red-500"
+                    className="text-red-500 underline decoration-red-500"
                   >
                     {char}
                   </span>
