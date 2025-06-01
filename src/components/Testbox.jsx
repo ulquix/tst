@@ -78,8 +78,8 @@ setWords(generate(phrase))
 
 
           if (currentLetterIndex >= words[currentWordIndex].length) {
-                        LetterCount.current = [...LetterCount.current,'incorrect']
             if (currentLetterIndex < words[currentWordIndex].length + 5) {
+              LetterCount.current = [...LetterCount.current,'incorrect']
               if (!overflowChars.current[currentWordIndex]) {
                 overflowChars.current[currentWordIndex] = [];
               }
@@ -147,15 +147,21 @@ setWords(generate(phrase))
           if (e.ctrlKey) {
             letterStatesRef.current[currentWordIndex] = {};
             delete overflowChars.current[currentWordIndex];
+            for (let i = 0; i < currentLetterIndex; i++) {
+              LetterCount.current.pop()
+              
+            }
             SetLetterIndex(0);
             return;
           }
+          LetterCount.current.pop()
           const word = letterStatesRef.current[currentWordIndex];
           if (currentLetterIndex > 0 && currentLetterIndex <= words[currentWordIndex].length) {
             word[currentLetterIndex - 1] = " ";
             SetLetterIndex((prev) => prev - 1);
-          } else if (currentLetterIndex >= words[currentWordIndex].length) {
-            LetterCount.current.pop()
+          } else if (currentLetterIndex > words[currentWordIndex].length) {
+            console.log(LetterCount.current)
+            console.log(LetterCount.current)
             const temp = [...overflowChars.current[currentWordIndex]];
             temp.pop();
             overflowChars.current[currentWordIndex] = temp;
