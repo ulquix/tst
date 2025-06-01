@@ -10,6 +10,7 @@ const STATES = {
 };
 
 const Testbox = ({on ,off}) => {
+  const {settings} = useContext(SettingContext)
   const [stats,Setstats] = useState({})
   const [startTime, setStartTime] = useState(null);
   const [currentTime,setCurrentTime] = useState(0)
@@ -25,13 +26,46 @@ const wordCount = useRef([])
   const WordsRef = useRef({});
   const overflowChars = useRef({});
 
-  const {settings} = useContext(SettingContext)
+useEffect(()=>{
+resetTest()
+  const phrase = getphrase()
+  setWords(generate(phrase))
 
+},[settings])
+
+const getphrase = ()=>{
+        let phrase
+         let difficulty;
+         let smalldifficulty
+  if(settings.mode=='easy'){
+    difficulty = 4
+    smalldifficulty = 0
+  }
+  if(settings.mode=='normal'){
+    difficulty = 6
+    smalldifficulty = 4
+  }
+
+  if(settings.mode=='hard'){
+    difficulty = 8
+    smalldifficulty = 6
+  }
+
+if(settings.BasedOn=='time'){
+phrase = {exactly:50,maxLength:difficulty,minLength:smalldifficulty}
+}
+else if(settings.BasedOn='words'){
+phrase = {exactly:settings.BasedDependency,maxLength:difficulty,minLength:smalldifficulty}
+}
+return phrase
+}
   useEffect(() => {
     const handlekeydown = (e) => {
       if (e.key === "F5") {
         e.preventDefault();
         resetTest();
+ const phrase = getphrase()
+setWords(generate(phrase))
         return;
       }
 
@@ -90,6 +124,7 @@ const wordCount = useRef([])
             }
 
             if (isDeletable.current && currentWordIndex >= 19) {
+            
               shiftWordBuffer();
               return;
             }
@@ -175,8 +210,14 @@ const wordCount = useRef([])
     overflowChars.current = { ...newOverflow };
 
     SetWordIndex((prev) => prev + 1);
-    const newWords = generate({ exactly: 10, maxLength: 6 })
+    if(settings.BasedOn=='words'){
+setWords(words.slice(10))
+    }
+    else{
+
+    const newWords = generate(getphrase())
     setWords([...words.slice(10),...newWords]);
+    }
     SetWordIndex((prev) => prev - 10);
     SetLetterIndex(0);
   };
@@ -231,15 +272,8 @@ off()
     const rawwpm = parseInt((rawLetter * 60) / (5 * elapsedTime)); 
     const realwpm = parseInt((correctLetter * 60) / (5 * elapsedTime)); 
 Setstats({TotalTime:parseInt(elapsedTime),correctWords,incorrectWords,rawLetter,correctLetter,rawwpm,realwpm})
-    console.log("elapsed time (s):", elapsedTime);
-    console.log('total words',correctWords+incorrectWords)
-    console.log('correct words',correctWords)
-    console.log('total letters',rawLetter)
-    console.log('correct letters',correctLetter)
-    console.log('raw speed',rawwpm)
-    console.log('actual speed',realwpm)
   }
-}, [status, startTime]);
+}, [status]);
 
 useEffect(() => {
   if (currentTime >= settings.BasedDependency) {

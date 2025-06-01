@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { IoTime } from "react-icons/io5";
 import { TbCircleLetterAFilled } from "react-icons/tb";
-import { FaEllipsisVertical } from "react-icons/fa6";
+import { FaEllipsisVertical, FaPlus } from "react-icons/fa6";
 import { SettingContext } from '../context/Settings';
 
 const timearr = [15, 30, 60, 120];
@@ -17,6 +17,11 @@ const DifficultyLevel = () => {
       setSettings(prev => ({ ...prev, mode: selected }));
     }
   }, [selected, setSettings]);
+  useEffect(() => {
+    
+console.log(settings)
+  }, [settings])
+  
 
   return (
     <div style={{ minWidth: 120, position: 'relative' }}>
@@ -65,6 +70,8 @@ const TestCustomizationBar = ({ isVisible }) => {
   // Store separate values for time and words
   const [timeValue, setTimeValue] = useState(timearr[0]);
   const [wordsValue, setWordsValue] = useState(wordarr[0]);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customValue, setCustomValue] = useState('');
 
   const handleCategoryClick = (type) => {
     const newArray = type === 'time' ? timearr : type === 'words' ? wordarr : [];
@@ -92,6 +99,35 @@ const TestCustomizationBar = ({ isVisible }) => {
     
     if (setSettings) {
       setSettings(prev => ({ ...prev, BasedDependency: value }));
+    }
+  };
+
+  const handleCustomValue = () => {
+    if (customValue && !isNaN(customValue) && parseInt(customValue) > 0) {
+      const value = parseInt(customValue);
+      
+      // Update the appropriate stored value
+      if (settings?.BasedOn === 'time') {
+        setTimeValue(value);
+      } else if (settings?.BasedOn === 'words') {
+        setWordsValue(value);
+      }
+      
+      if (setSettings) {
+        setSettings(prev => ({ ...prev, BasedDependency: value }));
+      }
+      
+      setCustomValue('');
+      setShowCustomInput(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleCustomValue();
+    } else if (e.key === 'Escape') {
+      setCustomValue('');
+      setShowCustomInput(false);
     }
   };
 
@@ -206,6 +242,100 @@ const TestCustomizationBar = ({ isVisible }) => {
               {item}
             </div>
           ))}
+          
+          {/* Custom value input */}
+          {showCustomInput ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div
+                contentEditable
+                onInput={(e) => {
+                  const text = e.target.textContent;
+                  // Only allow numbers
+                  const numericValue = text.replace(/[^0-9]/g, '');
+                  if (text !== numericValue) {
+                    e.target.textContent = numericValue;
+                    // Move cursor to end
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(e.target);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                  }
+                  setCustomValue(numericValue);
+                }}
+                onKeyDown={handleKeyPress}
+                onBlur={() => {
+                  if (!customValue) {
+                    setShowCustomInput(false);
+                  }
+                }}
+                ref={(el) => {
+                  if (el && showCustomInput) {
+                    el.focus();
+                    // Set placeholder-like text
+                    if (!customValue) {
+                      el.textContent = '';
+                      el.setAttribute('data-placeholder', settings?.BasedOn === 'time' ? 'min' : 'words');
+                    }
+                  }
+                }}
+                style={{
+                  width: '60px',
+                  height: '24px',
+                  backgroundColor: 'rgb(17 24 39)',
+                  color: 'white',
+                  border: '1px solid #3b82f6',
+                  borderRadius: '4px',
+                  padding: '0.25rem 0.5rem',
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  fontSize: '0.875rem',
+                  textAlign: 'center',
+                  outline: 'none',
+                  minHeight: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                data-placeholder={settings?.BasedOn === 'time' ? 'min' : 'words'}
+              />
+              <button
+                onClick={handleCustomValue}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '0.25rem 0.5rem',
+                  cursor: 'pointer',
+                  fontSize: '0.75rem',
+                  fontFamily: 'system-ui, -apple-system, sans-serif'
+                }}
+              >
+                Set
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => setShowCustomInput(true)}
+              style={{
+                cursor: 'pointer',
+                color: '#64748b',
+                transition: 'color 0.3s',
+                userSelect: 'none',
+                padding: '0.25rem',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = '#3b82f6'}
+              onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
+              title="Set custom value"
+            >
+              <FaPlus size={12} />
+            </div>
+          )}
         </div>
 
         <FaEllipsisVertical style={{ color: '#64748b' }} />
