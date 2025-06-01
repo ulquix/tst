@@ -38,7 +38,7 @@ const Navbar = () => {
 
   return (
     <>
-    <AppBar position="static" sx={{ backgroundColor: '#323437',boxShadow:'none' }}>
+    <AppBar position="static" sx={{ backgroundColor: ' rgb(17 24 39)',boxShadow:'none' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ minHeight: 80,px:2 }}>
             <KeyboardIcon/>
