@@ -276,10 +276,18 @@ Setstats({TotalTime:parseInt(elapsedTime),correctWords,incorrectWords,rawLetter,
 }, [status]);
 
 useEffect(() => {
-  if (currentTime >= settings.BasedDependency) {
-    setStatus(STATES.ENDED); 
+  if(settings.BasedOn=='time'){
+
+    if (currentTime >= settings.BasedDependency) {
+      setStatus(STATES.ENDED); 
+    }
   }
-}, [currentTime]);
+  if(settings.BasedOn == 'words'){
+    if(wordCount.current.length==settings.BasedDependency){
+      setStatus(STATES.ENDED)
+    }
+  }
+}, [currentTime,currentWordIndex]);
 
 useEffect(() => {
   let intervalId;
@@ -329,12 +337,13 @@ return (
         />
         <div className="flex align-center items-center mt-4 ml-4">
                        <div id="bankai" className='text-3xl  font-bold text-blue-500'>
-         {status==STATES.STARTED?settings.BasedDependency-currentTime:''}
+         {settings.BasedOn == 'time' && status==STATES.STARTED?settings.BasedDependency-currentTime:''}
+         {settings.BasedOn == 'words' && status==STATES.STARTED?`${currentWordIndex}/${settings.BasedDependency}`:''}
         </div>
         </div>
         <div className="flex justify-center mt-[1vh]">
           
-          <div className="main-div flex flex-wrap justify-start gap-4 w-7xl h-40 overflow-hidden relative">
+          <div className="select-none main-div flex flex-wrap justify-start gap-4 w-7xl h-40 overflow-hidden relative">
             {words.map((word, wordIdx) => (
               <div
                 ref={(el) => (WordsRef.current[wordIdx] = el)}
