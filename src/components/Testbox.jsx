@@ -13,7 +13,7 @@ const Testbox = ({on ,off}) => {
   const [stats,Setstats] = useState({})
   const [startTime, setStartTime] = useState(null);
   const [currentTime,setCurrentTime] = useState(0)
-  const [words, setWords] = useState(generate({ exactly: 100, maxLength: 6 }));
+  const [words, setWords] = useState(generate({ exactly: 30, maxLength: 6 }));
   const [currentWordIndex, SetWordIndex] = useState(0);
   const [currentLetterIndex, SetLetterIndex] = useState(0);
   const [cursorPos, SetCursor] = useState({ left: 0, top: 0 });
@@ -175,7 +175,8 @@ const wordCount = useRef([])
     overflowChars.current = { ...newOverflow };
 
     SetWordIndex((prev) => prev + 1);
-    setWords(words.slice(10));
+    const newWords = generate({ exactly: 10, maxLength: 6 })
+    setWords([...words.slice(10),...newWords]);
     SetWordIndex((prev) => prev - 10);
     SetLetterIndex(0);
   };

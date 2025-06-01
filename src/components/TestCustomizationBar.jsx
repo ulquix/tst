@@ -17,9 +17,7 @@ const DifficultyLevel = () => {
       setSettings(prev => ({ ...prev, mode: selected }));
     }
   }, [selected, setSettings]);
-useEffect(()=>{
-  console.log(settings)
-},[settings])
+
   return (
     <div style={{ minWidth: 120, position: 'relative' }}>
       <select
@@ -64,21 +62,34 @@ useEffect(()=>{
 const TestCustomizationBar = ({ isVisible }) => {
   const { settings, setSettings } = useContext(SettingContext);
   const [variableToMap, setVariableToMap] = useState(timearr);
+  // Store separate values for time and words
+  const [timeValue, setTimeValue] = useState(timearr[0]);
+  const [wordsValue, setWordsValue] = useState(wordarr[0]);
 
   const handleCategoryClick = (type) => {
     const newArray = type === 'time' ? timearr : type === 'words' ? wordarr : [];
     setVariableToMap(newArray);
     
+    // Use the stored value for the selected type
+    const storedValue = type === 'time' ? timeValue : type === 'words' ? wordsValue : null;
+    
     if (setSettings) {
       setSettings(prev => ({ 
         ...prev, 
         BasedOn: type, 
-        BasedDependency: newArray.length > 0 ? newArray[0] : null
+        BasedDependency: storedValue
       }));
     }
   };
 
   const toggleDependency = (value) => {
+    // Update the appropriate stored value based on current type
+    if (settings?.BasedOn === 'time') {
+      setTimeValue(value);
+    } else if (settings?.BasedOn === 'words') {
+      setWordsValue(value);
+    }
+    
     if (setSettings) {
       setSettings(prev => ({ ...prev, BasedDependency: value }));
     }
@@ -91,11 +102,11 @@ const TestCustomizationBar = ({ isVisible }) => {
         setSettings(prev => ({
           ...prev,
           BasedOn: 'time',
-          BasedDependency: timearr[0]
+          BasedDependency: timeValue
         }));
       }
     }
-  }, [settings, setSettings]);
+  }, [settings, setSettings, timeValue]);
 
   useEffect(() => {
     // Update variableToMap based on current BasedOn setting
