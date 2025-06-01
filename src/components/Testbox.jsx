@@ -10,6 +10,7 @@ const STATES = {
 };
 
 const Testbox = () => {
+  const [stats,Setstats] = useState({})
   const [startTime, setStartTime] = useState(null);
   const [currentTime,setCurrentTime] = useState(0)
   const [words, setWords] = useState(generate({ exactly: 100, maxLength: 6 }));
@@ -220,11 +221,10 @@ useEffect(() => {
     const incorrectWords = wordCount.current.filter((word)=>word=='incorrect').length
     const correctLetter = LetterCount.current.filter((letter)=>letter!='incorrect').length
     const rawLetter = LetterCount.current.length
-
     const elapsedTime = (endTime - startTime) / 1000;
     const rawwpm = parseInt((rawLetter * 60) / (5 * elapsedTime)); 
     const realwpm = parseInt((correctLetter * 60) / (5 * elapsedTime)); 
-
+Setstats({TotalTime:parseInt(elapsedTime),correctWords,incorrectWords,rawLetter,correctLetter,rawwpm,realwpm})
     console.log("elapsed time (s):", elapsedTime);
     console.log('total words',correctWords+incorrectWords)
     console.log('correct words',correctWords)
@@ -268,7 +268,7 @@ return (
     `}</style>
 
     {status === STATES.ENDED ? (
-      <TestResults/>
+      <TestResults stats={stats}/>
     ) : (
       <>
         <div
