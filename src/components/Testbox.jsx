@@ -44,6 +44,7 @@ const wordCount = useRef([])
 
 
           if (currentLetterIndex >= words[currentWordIndex].length) {
+                        LetterCount.current = [...LetterCount.current,'incorrect']
             if (currentLetterIndex < words[currentWordIndex].length + 5) {
               if (!overflowChars.current[currentWordIndex]) {
                 overflowChars.current[currentWordIndex] = [];
