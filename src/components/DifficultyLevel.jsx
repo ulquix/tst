@@ -13,7 +13,7 @@ const DifficultyLevel = () => {
   }, [selected]);
 
   return (
-    <div style={{ minWidth: 120 }}>
+    <div style={{ minWidth: 120, position:'absolute'}}>
  <Listbox value={selected} onChange={setSelected}>
   <div style={{ position: 'relative', width: 120 }}>
     <Listbox.Button

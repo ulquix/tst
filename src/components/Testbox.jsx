@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useRef, useCallback } from "rea
 import { SettingContext } from "../context/Settings";
 import { generate } from "random-words";
 import TestResults from "./TestResults";
+import Loader from "./Loader";
 
 const STATES = {
   NOT_STARTED: "not-started",
@@ -11,6 +12,7 @@ const STATES = {
 
 const Testbox = ({on ,off}) => {
   const {settings} = useContext(SettingContext)
+    const [loading, setLoading] = useState(true);
   const [stats,Setstats] = useState({})
   const [startTime, setStartTime] = useState(null);
   const [currentTime,setCurrentTime] = useState(0)
@@ -25,14 +27,25 @@ const wordCount = useRef([])
   const isDeletable = useRef();
   const WordsRef = useRef({});
   const overflowChars = useRef({});
+  
+useEffect(()=>{
+  console.log('bankai')
+  window.addEventListener('resize',function(){
+    UpdateCursor()
+  })
+const timer = () =>setTimeout(() => {
+  setLoading(false)
+}, 1500);
+timer()
+    return () => clearTimeout(timer);
 
+},[])
 useEffect(()=>{
 resetTest()
   const phrase = getphrase()
   setWords(generate(phrase))
 
 },[settings])
-
 const getphrase = ()=>{
         let phrase
          let difficulty;
@@ -192,6 +205,10 @@ setWords(generate(phrase))
     LetterCount.current = [];
     setStartTime(null)
     setCurrentTime(0)
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+    }, 500);
   };
 
   const shiftWordBuffer = () => {
@@ -313,7 +330,11 @@ useEffect(() => {
   };
 
 return (
+  
   <>
+  {loading && (
+        <Loader/>
+      )}
     <style>{`
       @keyframes blink {
         0%, 100% { opacity: 1; }
