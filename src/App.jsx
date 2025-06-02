@@ -1,10 +1,10 @@
 
 import {createBrowserRouter,Outlet,RouterProvider} from "react-router-dom"
 import Homepage from "./pages/Hompage"
-import Settings from "./pages/Settings"
 import About from "./pages/About"
 import Layout from "./components/Layout";
 import Fun from "./pages/Fun";
+import Settings from "./context/Settings";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,7 +20,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
+<Settings>
+
 <RouterProvider router={router}/>
+</Settings>
       </>
   )
 }

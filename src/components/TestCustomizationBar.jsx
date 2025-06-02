@@ -19,7 +19,7 @@ const DifficultyLevel = () => {
   }, [selected, setSettings]);
   useEffect(() => {
     
-console.log(settings)
+
   }, [settings])
   
 

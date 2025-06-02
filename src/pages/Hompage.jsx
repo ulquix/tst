@@ -1,15 +1,14 @@
 import TestCustomizationBar from '../components/TestCustomizationBar'
-import Settings from '../context/Settings'
+import {SettingContext} from '../context/Settings'
 import Testbox from '../components/Testbox'
-import { useState } from 'react'
+import { useState,useContext } from 'react'
 const Homepage = () => {
   const [isVisible,Setvisible] = useState(true)
+  const {settings} = useContext(SettingContext)
   return (  
     <>
-<Settings>
     <TestCustomizationBar isVisible={isVisible}/>
-<Testbox on={()=>Setvisible(true)} off={()=>Setvisible(false)}/>
-</Settings>
+<Testbox settings={settings} on={()=>Setvisible(true)} off={()=>Setvisible(false)}/>
     </>
   )
 }
