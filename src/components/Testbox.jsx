@@ -5,7 +5,6 @@ import React, {
   useCallback,
 } from "react";
 import { generate } from "random-words";
-import TestResults from "./TestResults";
 import Loader from "./Loader";
 
 const STATES = {
@@ -14,7 +13,7 @@ const STATES = {
   ENDED: "ended",
 };
 
-const Testbox = ({ on, off, settings }) => {
+const Testbox = ({ on, off, settings ,TestResults}) => {
   const [loading, setLoading] = useState(true);
   const [stats, Setstats] = useState({});
   const [startTime, setStartTime] = useState(null);
@@ -129,10 +128,6 @@ const Testbox = ({ on, off, settings }) => {
           if (currentLetterIndex > 0) {
             LetterCount.current = [...LetterCount.current, "space"];
 
-            // if (wordCount >= 20) {
-            //   setStatus(STATES.ENDED);
-
-            // }
 
             if (currentLetterIndex <= words[currentWordIndex].length - 1) {
               for (
@@ -359,12 +354,7 @@ const Testbox = ({ on, off, settings }) => {
   return (
     <>
       {loading && <Loader />}
-      <style>{`
-      @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-      }
-    `}</style>
+
 
       {status === STATES.ENDED ? (
         <TestResults onNewTest={resetTest} stats={stats} />
@@ -380,7 +370,6 @@ const Testbox = ({ on, off, settings }) => {
               top: cursorPos.top,
               left: cursorPos.left,
               transition: "left .1s ease, top 0.1s ease",
-              // animation: "blink 1s steps(1) infinite",
               pointerEvents: "none",
               zIndex: 10,
             }}
