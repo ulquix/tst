@@ -90,7 +90,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
       }
 
       if (status !== STATES.ENDED) {
-        if (/^[a-zA-Z]$/.test(e.key) && e.key.length === 1) {
+        if ( e.key.length === 1) {
           if (currentWordIndex === 0 && currentLetterIndex === 0) {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
@@ -252,7 +252,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
     SetLetterIndex(0);
   };
 
-  const UpdateCursor = useCallback(() => {
+  const UpdateCursor = () => {
     if (status !== STATES.ENDED) {
       const currentWord = WordsRef.current?.[currentWordIndex];
       if (!currentWord || !currentWord.children) return;
@@ -272,7 +272,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
         SetCursor({ left: rect.left, top: rect.top });
       }
     }
-  }, [currentLetterIndex, currentWordIndex, status]);
+  }
 
   useEffect(() => {
     UpdateCursor();
