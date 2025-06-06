@@ -90,7 +90,8 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
       }
 
       if (status !== STATES.ENDED) {
-        if ( e.key.length === 1) {
+        if (e.key.length === 1 && e.code!="Space") {
+          console.log(e.key)
           if (currentWordIndex === 0 && currentLetterIndex === 0) {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
