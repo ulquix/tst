@@ -91,7 +91,6 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
 
       if (status !== STATES.ENDED) {
         if (e.key.length === 1 && e.code!="Space") {
-          console.log(e.key)
           if (currentWordIndex === 0 && currentLetterIndex === 0) {
             setStatus(STATES.STARTED);
             setStartTime(Date.now());
@@ -126,6 +125,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
         }
 
         if (e.code === "Space") {
+
           if (currentLetterIndex > 0) {
             LetterCount.current = [...LetterCount.current, "space"];
 
@@ -143,11 +143,6 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
               }
             }
 
-            if (isDeletable.current && currentWordIndex >= 19) {
-              shiftWordBuffer();
-              return;
-            }
-
             const values = Object.values(
               letterStatesRef.current[currentWordIndex]
             );
@@ -159,6 +154,11 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
             } else {
               wordCount.current = [...wordCount.current, "correct"];
             }
+            if (isDeletable.current && currentWordIndex >= 19) {
+              shiftWordBuffer();
+              return;
+            }
+
             SetLetterIndex(0);
             SetWordIndex((prev) => prev + 1);
           }
@@ -183,8 +183,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
             word[currentLetterIndex - 1] = " ";
             SetLetterIndex((prev) => prev - 1);
           } else if (currentLetterIndex > words[currentWordIndex].length) {
-            console.log(LetterCount.current);
-            console.log(LetterCount.current);
+
             const temp = [...overflowChars.current[currentWordIndex]];
             temp.pop();
             overflowChars.current[currentWordIndex] = temp;
@@ -381,7 +380,7 @@ const Testbox = ({ on, off, settings ,TestResults}) => {
                 ? settings.BasedDependency - currentTime
                 : ""}
               {settings.BasedOn == "words" && status == STATES.STARTED
-                ? `${currentWordIndex}/${settings.BasedDependency}`
+                ? `${wordCount.current.length}/${settings.BasedDependency}`
                 : ""}
             </div>
           </div>
